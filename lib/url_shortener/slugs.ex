@@ -6,6 +6,7 @@ defmodule UrlShortener.Slugs do
   import Ecto.Query, warn: false
   alias UrlShortener.Repo
 
+  alias UrlShortener.Helpers
   alias UrlShortener.Slugs.Slug
 
   @doc """
@@ -21,24 +22,6 @@ defmodule UrlShortener.Slugs do
     Repo.all(Slug)
   end
 
-  @doc """
-  Creates a slug.
-
-  ## Examples
-
-      iex> create_slug(%{field: value})
-      {:ok, %Slug{}}
-
-      iex> create_slug(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def create_slug(attrs) do
-    %Slug{}
-    |> Slug.changeset(attrs)
-    |> Repo.insert()
-  end
-
 
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking slug changes.
@@ -51,6 +34,61 @@ defmodule UrlShortener.Slugs do
   """
   def change_slug(%Slug{} = slug, attrs \\ %{}) do
     Slug.changeset(slug, attrs)
+  end
+
+  @doc """
+  Creates a slug. If the provided alias is blank, a random alias will be created.
+
+  ## Examples
+
+      iex> create_slug(%{"original_url" => "https://www.google.com", "alias" => "google"})
+      {:ok, %Slug{"original_url" => "https://www.google.com", "alias" => "google"}}
+
+      iex> create_slug(%{"original_url" => "https://www.google.com", "alias" => ""})
+      {:ok, %Slug{"original_url" => "https://www.google.com", "alias" => "d8S9w"}}
+
+      iex> create_slug(%{"original_url" => nil, "alias" => nil})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_slug(attrs) do
+    # If user does not provide an alias, then generate a random slug
+    if attrs["alias"] == "" do
+      generate_and_insert_slug(attrs)
+    # If user provides an alias, do a simple insert and return the changeset
+    else
+      insert_slug(attrs)
+    end
+  end
+
+  defp insert_slug(attrs) do
+    %Slug{}
+    |> Slug.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  defp generate_and_insert_slug(attrs, alias_length \\ 5) do
+    random_slug = Helpers.create_random_slug(alias_length)
+    case insert_slug(Map.put(attrs, "alias", random_slug)) do
+      {:ok, insert_result} -> {:ok, insert_result}
+      {:error, changeset} ->
+        # If the randomly generated slug was already taken,
+        # try again with a different random slug.
+        if slug_taken?(changeset) do
+          generate_and_insert_slug(attrs, alias_length + 1)
+        # If any other error occurs, send the error back to the user
+        # but don't send back the slug (leave the slug blank).
+        else
+          {:error, %{changeset | data: %{changeset.data | alias: ""}}}
+        end
+    end
+  end
+
+  def slug_taken?(%Ecto.Changeset{} = changeset) do
+    case changeset.errors[:alias] do
+      {_, [constraint: :unique, constraint_name: _]} -> true
+      _ -> false
+    end
   end
 
   @doc """

@@ -4,6 +4,9 @@ defmodule UrlShortener.SlugsTest do
   alias UrlShortener.Slugs
   alias UrlShortener.Slugs.Slug
 
+  # Use Mimic to mock the create_random_slug helper method
+  use Mimic.DSL
+
   describe "slugs" do
     import UrlShortener.SlugsFixtures
 
@@ -99,6 +102,38 @@ defmodule UrlShortener.SlugsTest do
       assert [first_slug, second_slug] = Slugs.list_slugs()
       assert first_slug.count_visits == 2
       assert second_slug.count_visits == 3
+    end
+  end
+
+  describe "random_slug_generation" do
+    @valid_attrs %{"original_url" => "https://en.wikipedia.org/", "alias" =>  ""}
+
+    setup do
+      stub UrlShortener.Helpers.create_random_slug(_length), do: "random"
+      :ok
+    end
+
+    test "create_slug/1 creates random slug if none provided" do
+      assert {:ok, %Slug{} = slug} = Slugs.create_slug(@valid_attrs)
+      assert slug.original_url == "https://en.wikipedia.org/"
+      assert slug.alias == "random"
+    end
+
+    test "create_slug/1 avoid random slug collisions" do
+      expect UrlShortener.Helpers.create_random_slug(_length), do: "first"
+      expect UrlShortener.Helpers.create_random_slug(_length), do: "first"
+
+      assert {:ok, %Slug{} = slug1} = Slugs.create_slug(@valid_attrs)
+      assert {:ok, %Slug{} = slug2} = Slugs.create_slug(@valid_attrs)
+      assert slug1.alias == "first"
+      assert slug2.alias == "random"
+    end
+
+    test "create_slug/1 invalid URL and empty slug" do
+      attrs = %{"original_url" => "en.wikipedia.org", "alias" =>  ""}
+      assert {:error, changeset} = Slugs.create_slug(attrs)
+      assert %{original_url: ["has invalid format"]} = errors_on(changeset)
+      assert changeset.data.alias == ""
     end
   end
 end
