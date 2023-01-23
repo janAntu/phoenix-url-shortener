@@ -25,4 +25,19 @@ defmodule UrlShortenerWeb.SlugController do
         render(conn, "new.html", changeset: changeset)
     end
   end
+
+  def redirect_to_url(conn, %{"lookup_alias" => [lookup_alias]}) do
+    case Slugs.get_url_from_slug(lookup_alias) do
+      {:ok, original_url} ->
+        conn
+        |> put_flash(:info, "Redirecting to original URL")
+        |> redirect(external: original_url)
+      # If user enters a slug that isn't in the database,
+      # redirect to a custom 404 error page.
+      {:error, _reason} ->
+        conn
+        |> put_status(404)
+        |> render("error.html", lookup_alias: lookup_alias)
+    end
+  end
 end

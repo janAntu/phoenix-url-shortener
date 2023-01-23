@@ -20,5 +20,7 @@ defmodule UrlShortenerWeb.Router do
 
     # Use this endpoint to list all urls and slugs
     get "/stats", SlugController, :stats
+
+    get "/*lookup_alias", SlugController, :redirect_to_url
   end
 end

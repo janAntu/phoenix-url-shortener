@@ -10,7 +10,16 @@ defmodule UrlShortener.MixProject do
       compilers: Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      test_coverage: [ignore_modules: [
+        UrlShortener.Application,
+        UrlShortener.Repo,
+        UrlShortenerWeb,
+        UrlShortenerWeb.ErrorView,
+        UrlShortenerWeb.LayoutView,
+        UrlShortenerWeb.SlugView,
+        UrlShortenerWeb.Telemetry
+      ]]
     ]
   end
 

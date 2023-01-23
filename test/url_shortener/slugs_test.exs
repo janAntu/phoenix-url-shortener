@@ -4,9 +4,6 @@ defmodule UrlShortener.SlugsTest do
   alias UrlShortener.Slugs
   alias UrlShortener.Slugs.Slug
 
-  # Use Mimic to mock the create_random_slug helper method
-  use Mimic.DSL
-
   describe "slugs" do
     import UrlShortener.SlugsFixtures
 
@@ -68,6 +65,40 @@ defmodule UrlShortener.SlugsTest do
       assert %{alias: ["has invalid format"]} = errors_on(changeset)
 
       assert Slugs.list_slugs() == []
+    end
+  end
+
+  describe "routing_multiple_urls" do
+    @url1 "https://en.wikipedia.org/"
+    @url2 "https://xkcd.com/1700"
+    @valid_attrs1 %{"original_url" => @url1, "alias" =>  "wiki"}
+    @valid_attrs2 %{"original_url" => @url2, "alias" =>  "xkcd"}
+
+    setup do
+      Slugs.create_slug(@valid_attrs1)
+      Slugs.create_slug(@valid_attrs2)
+      :ok
+    end
+
+    test "get_url_from_slug/1 fetches correct urls" do
+      assert {:ok, @url1} == Slugs.get_url_from_slug("wiki")
+      assert {:ok, @url2} == Slugs.get_url_from_slug("xkcd")
+    end
+
+    test "get_url_from_slug/1 error handling" do
+      assert {:error,  "Alias not found in database"} == Slugs.get_url_from_slug("fake")
+    end
+
+    test "increment_visit_count/1 increments counts correctly" do
+      assert {:ok, @url1} == Slugs.get_url_from_slug("wiki")
+      assert {:ok, @url1} == Slugs.get_url_from_slug("wiki")
+      assert {:ok, @url2} == Slugs.get_url_from_slug("xkcd")
+      assert {:ok, @url2} == Slugs.get_url_from_slug("xkcd")
+      assert {:ok, @url2} == Slugs.get_url_from_slug("xkcd")
+
+      assert [first_slug, second_slug] = Slugs.list_slugs()
+      assert first_slug.count_visits == 2
+      assert second_slug.count_visits == 3
     end
   end
 end

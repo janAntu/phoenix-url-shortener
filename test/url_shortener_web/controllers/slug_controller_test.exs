@@ -34,4 +34,34 @@ defmodule UrlShortenerWeb.SlugControllerTest do
       assert html_response(conn, 200) =~ "Oops, something went wrong!"
     end
   end
+
+  describe "redirection" do
+    setup [:create_slug]
+
+    test "redirects to external url", %{conn: conn} do
+      conn = get(conn, "/#{@create_attrs.alias}")
+      assert redirected_to(conn) == @create_attrs.original_url
+    end
+
+    test "redirects to 404 for nonexistant slug", %{conn: conn} do
+      conn = get(conn, "/nonexistant")
+      assert html_response(conn, 404) =~
+        "Error 404: URL shortcut \"nonexistant\" not found"
+    end
+
+    test "stats page updated after visiting external url", %{conn: conn} do
+      for _ <- 1..7 do
+        _conn = get(conn, "/#{@create_attrs.alias}")
+      end
+
+      conn = get(conn, "/stats")
+      assert html_response(conn, 200) =~
+        Regex.compile!("#{@create_attrs.alias}[\<\\/td\\>\\s]*7")
+    end
+  end
+
+  defp create_slug(_) do
+    slug = slug_fixture()
+    %{slug: slug}
+  end
 end
