@@ -2,11 +2,11 @@
 
 # Table of Contents
 
-- Step 0: [Elixir Setup and Phoenix Boilerplate](#elixir-setup-and-phoenix-boilerplate)
-- Step 1: [Data Model and CRUD Functionality](#data-model-and-crud-functionality)
-- Step 2: [Redirect to External URLs](#redirect-to-external-urls)
-- Step 3: [Generate Random Slugs](#generate-random-slugs)
-- Step 4: [Stats Page and CSV Download](#stats-page-and-csv-download)
+- [Elixir Setup and Phoenix Boilerplate](#elixir-setup-and-phoenix-boilerplate)
+- [Data Model and CRUD Functionality](#data-model-and-crud-functionality)
+- [Redirect to External URLs](#redirect-to-external-urls)
+- [Generate Random Slugs](#generate-random-slugs)
+- [Stats Page and CSV Download](#stats-page-and-csv-download)
 
 &nbsp;
 # Elixir Setup and Phoenix Boilerplate
@@ -51,7 +51,6 @@ I used this command to create a new resource for my table, **slugs**:
 mix phx.gen.html Slugs Slug slugs original_url:string alias:string count_visits:integer
 ```
 
-TODO
 &nbsp;
 ## Schema and Changeset
 
