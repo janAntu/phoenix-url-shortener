@@ -1,0 +1,23 @@
+<h1>Show Slug</h1>
+
+<ul>
+
+  <li>
+    <strong>Original url:</strong>
+    <%= @slug.original_url %>
+  </li>
+
+  <li>
+    <strong>Alias:</strong>
+    <%= @slug.alias %>
+  </li>
+
+  <li>
+    <strong>Count visits:</strong>
+    <%= @slug.count_visits %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: Routes.slug_path(@conn, :edit, @slug) %></span> |
+<span><%= link "Back", to: Routes.slug_path(@conn, :index) %></span>
