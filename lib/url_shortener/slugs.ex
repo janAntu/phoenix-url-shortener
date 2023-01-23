@@ -79,7 +79,10 @@ defmodule UrlShortener.Slugs do
         # If any other error occurs, send the error back to the user
         # but don't send back the slug (leave the slug blank).
         else
-          {:error, %{changeset | data: %{changeset.data | alias: ""}}}
+          stripped_changeset = changeset
+          |> Map.put(:changes, %{changeset.changes | alias: ""})
+          |> Map.put(:data, %{changeset.data | alias: ""})
+          {:error, stripped_changeset}
         end
     end
   end
@@ -113,5 +116,32 @@ defmodule UrlShortener.Slugs do
       {0, _} -> {:error,  "Alias not found in database"}
       {1, [original_url]} -> {:ok,  original_url}
     end
+  end
+
+
+  @doc """
+  List all slugs as a CSV-formatted string
+
+  ## Examples
+
+      iex> get_csv_data()
+      {"Original URL,Alias,Number of Visits\r\nhttps:www.google.com,google,5\r\n"}
+
+  """
+  def get_csv_data do
+    # Query all records from the slugs database table
+    # (A more-refined solution would include pagination and some kind of
+    # user-based filtering, instead of dumping the entire database.)
+    Slug
+    |> order_by(:inserted_at)
+    |> Repo.all
+    # Convert Ecto schema to a CSV string, with human-readable column names
+    |> CSV.encode(headers: [
+      original_url: "Original URL",
+      alias: "Alias",
+      count_visits: "Number of Visits"
+    ])
+    |> Enum.to_list
+    |> to_string
   end
 end

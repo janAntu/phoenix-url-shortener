@@ -60,6 +60,24 @@ defmodule UrlShortenerWeb.SlugControllerTest do
     end
   end
 
+  describe "stats" do
+    setup [:create_slug]
+
+    test "lists all slugs", %{conn: conn} do
+      conn = get(conn, "/stats")
+      assert html_response(conn, 200) =~ "Shortened URL Stats"
+      assert html_response(conn, 200) =~ "Download as CSV"
+      assert html_response(conn, 200) =~ "Back to homepage"
+    end
+
+    test "download csv",  %{conn: conn} do
+      conn = post(conn, "/stats")
+      assert response_content_type(conn, :csv)
+      assert response(conn, 200) =~ Enum.join(
+        [@create_attrs.original_url, @create_attrs.alias, "0"], ",")
+    end
+  end
+
   defp create_slug(_) do
     slug = slug_fixture()
     %{slug: slug}

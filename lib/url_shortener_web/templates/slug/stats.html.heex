@@ -21,4 +21,7 @@
   </tbody>
 </table>
 
+<%= button to: Routes.slug_path(@conn, :download_csv) do %>
+  Download as CSV
+<% end %>
 <span><%= link "Back to homepage", to: Routes.slug_path(@conn, :new) %></span>

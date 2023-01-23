@@ -103,30 +103,39 @@ defmodule UrlShortener.SlugsTest do
       assert first_slug.count_visits == 2
       assert second_slug.count_visits == 3
     end
+
+    test "get_csv_data/0" do
+      for _ <- 1..5 do Slugs.get_url_from_slug("wiki") end
+      for _ <- 1..7 do Slugs.get_url_from_slug("xkcd") end
+
+      assert Slugs.get_csv_data() == Enum.join([
+        Enum.join(["Original URL", "Alias", "Number of Visits"], ","),
+        Enum.join([@url1, "wiki", "5"], ","),
+        Enum.join([@url2, "xkcd", "7"], ","),
+        ""
+      ], "\r\n")
+    end
   end
 
   describe "random_slug_generation" do
     @valid_attrs %{"original_url" => "https://en.wikipedia.org/", "alias" =>  ""}
 
     setup do
-      stub UrlShortener.Helpers.create_random_slug(_length), do: "random"
+      stub UrlShortener.Helpers.create_random_slug(l), do: String.duplicate("x", l)
       :ok
     end
 
     test "create_slug/1 creates random slug if none provided" do
       assert {:ok, %Slug{} = slug} = Slugs.create_slug(@valid_attrs)
       assert slug.original_url == "https://en.wikipedia.org/"
-      assert slug.alias == "random"
+      assert slug.alias == "xxxxx"
     end
 
     test "create_slug/1 avoid random slug collisions" do
-      expect UrlShortener.Helpers.create_random_slug(_length), do: "first"
-      expect UrlShortener.Helpers.create_random_slug(_length), do: "first"
-
       assert {:ok, %Slug{} = slug1} = Slugs.create_slug(@valid_attrs)
       assert {:ok, %Slug{} = slug2} = Slugs.create_slug(@valid_attrs)
-      assert slug1.alias == "first"
-      assert slug2.alias == "random"
+      assert slug1.alias == "xxxxx"
+      assert slug2.alias == "xxxxxx"
     end
 
     test "create_slug/1 invalid URL and empty slug" do
@@ -134,6 +143,7 @@ defmodule UrlShortener.SlugsTest do
       assert {:error, changeset} = Slugs.create_slug(attrs)
       assert %{original_url: ["has invalid format"]} = errors_on(changeset)
       assert changeset.data.alias == ""
+      assert changeset.changes.alias == ""
     end
   end
 end

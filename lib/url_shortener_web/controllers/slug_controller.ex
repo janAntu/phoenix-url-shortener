@@ -40,4 +40,15 @@ defmodule UrlShortenerWeb.SlugController do
         |> render("error.html", lookup_alias: lookup_alias)
     end
   end
+
+  def download_csv(conn, _params) do
+    csv_data = Slugs.get_csv_data()
+
+    conn
+    |> put_resp_content_type("text/csv")
+    |> put_resp_header(
+      "content_disposition",
+      "attachment; filename=\"url_shortener_stats.csv\"")
+    |> send_resp(200, csv_data)
+  end
 end
