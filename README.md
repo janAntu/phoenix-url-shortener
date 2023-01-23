@@ -10,7 +10,7 @@ aliases.
 - Unit and integration tests with 100% code coverage (excluding auto-generated code)
 - Automated testing and deployment with Docker Compose
 
-Read a step-by-step walkthrough of the source code in the [WALKTHROUGH](WALKTHROUGH)
+Read a step-by-step walkthrough of the source code in the [WALKTHROUGH](WALKTHROUGH.md)
 
 
 ## Setup Instructions

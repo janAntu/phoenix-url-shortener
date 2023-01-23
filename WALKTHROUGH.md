@@ -1,5 +1,7 @@
 # Step-by-step Walkthough of URL Shortener App
 
+This page is a step-by-step walkthough of my development process for this web app. These steps include all the info you'd need to build a similar app yourself, including the environment setup, source code, testing, and potential room for improvement.
+
 # Table of Contents
 
 - [Elixir Setup and Phoenix Boilerplate](#elixir-setup-and-phoenix-boilerplate)
@@ -297,7 +299,7 @@ These tests cover the three routes we've created so far and validate the output 
 &nbsp;
 # Redirect to External URLs
 
-Now that we've endured the tedium of laying out this basic groundwork, we can finally look at some more interesting features. This app's most important feature is redirecting any user-provided URL slug to an external website, so we'll move on to that.
+Now that we've endured the tedious task of laying out this basic groundwork, we can finally look at some more interesting features. This app's most important feature is redirecting any user-provided URL slug to an external website, so we'll move on to that.
 
 ## Data Model Updates
 
@@ -401,7 +403,7 @@ For the two new functions above, I added a couple unit and integration tests:
     end
   end
 ```
-These unit tests are pretty straightforward - check the happy path and error path of our function, and make sure `count_visits` is getting incremented properly.
+These unit tests are straightforward - check the happy path and error path of our function, and make sure `count_visits` is getting incremented properly.
 
 #### **`test/url_shortener_web/controllers/slug_controller_test.exs`**
 ```elixir
@@ -437,8 +439,7 @@ These integration tests use some of the Phoenix helper functions for testing. Th
 # Generate Random Slugs
 A useful feature for our URL shortener is generating slugs for our users. So far, our app requires users to provide their own slugs, but this isn't convenient for many use cases. Especially as the number of users increases, we'd like a simple solution for users to create short, simple URLs on the fly, without worrying about collisions or URL limitations.
 
-Keeping thing simple, I wrote a function to generate random alphanumeric strings with the built-in Elixir `Enum.take_random` functions. My app will use five-character strings, meaning there are (26 + 26 + 10)^5 = 916 million possible aliases. Ideally we'd have a system to scale beyond this number, and perhaps use a more secure hash function instead of the basic random function. But this logic will work for now:
-
+Keeping thing simple, I wrote a function to generate random mixed-case alphanumeric strings with the built-in Elixir `Enum.take_random` functions. The default length is (26 + 26 + 10)^5 = 916 million possible aliases, with an optional parameter to allow longer slugs:
 
 #### **`lib/url_shortener/helper.ex`**
 ```elixir
@@ -493,7 +494,9 @@ Here are the functions to handle this logic:
   end
 ```
 
-The first two helper functions just insert the new slug and check if a changeset says a slug has already been taken. The third function uses these and `create_random_slug` to generate and insert a random slug. If the slug is taken, we'll use tail recursion to try again. This should be a rare occurence until we have tens of millions of aliases. When any other validation error occurs, we still want to send the results back to the user, but not the random alias. We handle that in the `else` block above.
+The first two helper functions just insert the new slug and check if a changeset says a slug has already been taken. The third function uses these and `create_random_slug` to generate and insert a random slug. If the slug is taken, we'll use tail recursion to try again. When the database is mostly empty, this recursive loop will rarely get called; however, if we had hundreds of millions of aliases, we'd want to avoid long or infinite loops before finding an unused alias. We avoid that by increasing the alias length whenever we find a collision, to six, seven or more characters when needed. By increasing with every recursive call, we'll make it extremely rare to loop more than 2-3 times, even with trillions of aliases.
+
+When any other validation error occurs, we still want to send the results back to the user, but not the random alias. We handle that in the `else` block above.
 
 Finally, I rewrote the `create_slug` function and this new feature was complete:
 
