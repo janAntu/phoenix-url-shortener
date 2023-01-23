@@ -1,0 +1,24 @@
+<h1>Shortened URL Stats</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Original url</th>
+      <th>Slug</th>
+      <th>Count visits</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for slug <- @slugs do %>
+    <tr>
+      <td><%= slug.original_url %></td>
+      <td><%= slug.alias %></td>
+      <td><%= slug.count_visits %></td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+
+<span><%= link "Back to homepage", to: Routes.slug_path(@conn, :new) %></span>

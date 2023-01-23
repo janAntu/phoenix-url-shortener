@@ -20,7 +20,7 @@ erl_crash.dump
 *.ez
 
 # Ignore package tarball (built via "mix hex.build").
-url_shortener-*.tar
+blog-*.tar
 
 # Ignore assets that are produced by build tools.
 /priv/static/assets/
@@ -32,3 +32,6 @@ url_shortener-*.tar
 npm-debug.log
 /assets/node_modules/
 
+# Artifacts from VSCode and MacOS environment
+.elixir_ls
+.DS_Store

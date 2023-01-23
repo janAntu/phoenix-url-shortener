@@ -1,23 +1,17 @@
-<h1>Show Slug</h1>
+<h1>Created new short URL!</h1>
 
 <ul>
 
   <li>
-    <strong>Original url:</strong>
+    <strong>Original URL:</strong>
     <%= @slug.original_url %>
   </li>
 
   <li>
-    <strong>Alias:</strong>
-    <%= @slug.alias %>
-  </li>
-
-  <li>
-    <strong>Count visits:</strong>
-    <%= @slug.count_visits %>
+    <strong>New URL:</strong>
+    http://localhost:8080/<%= @slug.alias %>
   </li>
 
 </ul>
 
-<span><%= link "Edit", to: Routes.slug_path(@conn, :edit, @slug) %></span> |
-<span><%= link "Back", to: Routes.slug_path(@conn, :index) %></span>
+<span><%= link "Back to homepage", to: Routes.slug_path(@conn, :new) %></span>

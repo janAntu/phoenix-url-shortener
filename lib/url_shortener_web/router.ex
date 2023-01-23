@@ -10,18 +10,15 @@ defmodule UrlShortenerWeb.Router do
     plug :put_secure_browser_headers
   end
 
-  pipeline :api do
-    plug :accepts, ["json"]
-  end
-
   scope "/", UrlShortenerWeb do
     pipe_through :browser
 
-    get "/", PageController, :index
-  end
+    get "/", SlugController, :new do
+      # Only use this endpoint for creating new slugs
+      post "/", SlugController, :create
+    end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", UrlShortenerWeb do
-  #   pipe_through :api
-  # end
+    # Use this endpoint to list all urls and slugs
+    get "/stats", SlugController, :stats
+  end
 end

@@ -1,3 +1,3 @@
-defmodule UrlShortenerWeb.PageViewTest do
+defmodule UrlShortenerWeb.SlugViewTest do
   use UrlShortenerWeb.ConnCase, async: true
 end

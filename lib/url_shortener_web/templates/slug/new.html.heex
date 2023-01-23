@@ -1,5 +1,19 @@
-<h1>New Slug</h1>
+<h2>Create a short URL</h2>
 
-<%= render "form.html", Map.put(assigns, :action, Routes.slug_path(@conn, :create)) %>
+<%= form_for @changeset, Routes.slug_path(@conn, :create), fn f -> %>
+  <%= if @changeset.action do %>
+    <div class="alert alert-danger">
+      <p>Oops, something went wrong! Please check the errors below.</p>
+    </div>
+  <% end %>
 
-<span><%= link "Back", to: Routes.slug_path(@conn, :index) %></span>
+  <div>
+    <%= text_input f, :original_url, placeholder: "Original URL" %>
+    <%= error_tag f, :original_url %>
+  </div>
+  <div>
+    <%= text_input f, :alias, placeholder: "Alias (optional)" %>
+    <%= error_tag f, :alias %>
+  </div>
+  <%= submit "Create URL" %>
+<% end %>

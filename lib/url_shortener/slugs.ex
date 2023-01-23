@@ -22,22 +22,6 @@ defmodule UrlShortener.Slugs do
   end
 
   @doc """
-  Gets a single slug.
-
-  Raises `Ecto.NoResultsError` if the Slug does not exist.
-
-  ## Examples
-
-      iex> get_slug!(123)
-      %Slug{}
-
-      iex> get_slug!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_slug!(id), do: Repo.get!(Slug, id)
-
-  @doc """
   Creates a slug.
 
   ## Examples
@@ -55,39 +39,6 @@ defmodule UrlShortener.Slugs do
     |> Repo.insert()
   end
 
-  @doc """
-  Updates a slug.
-
-  ## Examples
-
-      iex> update_slug(slug, %{field: new_value})
-      {:ok, %Slug{}}
-
-      iex> update_slug(slug, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_slug(%Slug{} = slug, attrs) do
-    slug
-    |> Slug.changeset(attrs)
-    |> Repo.update()
-  end
-
-  @doc """
-  Deletes a slug.
-
-  ## Examples
-
-      iex> delete_slug(slug)
-      {:ok, %Slug{}}
-
-      iex> delete_slug(slug)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_slug(%Slug{} = slug) do
-    Repo.delete(slug)
-  end
 
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking slug changes.

@@ -11,9 +11,8 @@ defmodule UrlShortener.SlugsFixtures do
     {:ok, slug} =
       attrs
       |> Enum.into(%{
-        alias: "some alias",
-        count_visits: 42,
-        original_url: "some original_url"
+        original_url: "https://en.wikipedia.org/",
+        alias: "wiki"
       })
       |> UrlShortener.Slugs.create_slug()
 
