@@ -2,9 +2,16 @@
 
 This repository contains the backend for a URL shortener, created with Elixir and Phoenix.
 With this web app, users can create shortened URLs, with customized or auto-generated
-aliases. The app stores these aliases in a Postgres database and routes users to the
-original URL provided, and users can view and download statistics about their shortened
-URLs.
+aliases.
+
+#### Features:
+- PostgreSQL Database for data persistence
+- CSV file download for URL statistics
+- Unit and integration tests with 100% code coverage (excluding auto-generated code)
+- Automated testing and deployment with Docker Compose
+
+Read a step-by-step walkthrough of the source code in the [WALKTHROUGH](WALKTHROUGH)
+
 
 ## Setup Instructions
 

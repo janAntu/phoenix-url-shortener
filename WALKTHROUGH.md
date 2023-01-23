@@ -2,11 +2,11 @@
 
 # Table of Contents
 
-- Step 0: [Elixir Setup and Phoenix Boilerplate](elixir-setup-and-phoenix-boilerplate)
-- Step 1: [Data Model and CRUD Functionality](data-model-and-crud-functionality)
-- Step 2: [Redirect to External URLs](redirect-to-external-urls)
-- Step 3: [Generate Random Slugs](generate-random-slugs)
-- Step 4: [Stats Page and CSV Download](stats-page-and-csv-download)
+- Step 0: [Elixir Setup and Phoenix Boilerplate](#elixir-setup-and-phoenix-boilerplate)
+- Step 1: [Data Model and CRUD Functionality](#data-model-and-crud-functionality)
+- Step 2: [Redirect to External URLs](#redirect-to-external-urls)
+- Step 3: [Generate Random Slugs](#generate-random-slugs)
+- Step 4: [Stats Page and CSV Download](#stats-page-and-csv-download)
 
 &nbsp;
 # Elixir Setup and Phoenix Boilerplate
@@ -693,7 +693,7 @@ This wraps up all of our unit and integration tests! Once again, I used the `mix
 Phoenix aficionados might have noticed something missing in this walkthrough: views. I didn't see much need for a view module, other than the boilerplate Phoenix generated to link my HTML templates to the controller. If I added a fancier statistics table or custom error pages (aside from my rough 404 page), Phoenix views could be very handy, and they would merit view tests as well.
 
 #### **`Code Coverage`**
-```diff
+```
 url_shortener % mix test --cover
 Cover compiling modules ...
 ..........................
